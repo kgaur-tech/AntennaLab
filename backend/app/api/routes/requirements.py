@@ -6,6 +6,7 @@ from backend.app.schemas.design_schema import RequirementValidationRequest
 from backend.app.schemas.requirement_schema import RequirementSchema
 from backend.app.services.design_service import DesignService
 from backend.app.services.recommendation_service import RecommendationService
+from backend.app.services.explainable_recommendation_service import ExplainableRecommendationService
 
 router = APIRouter(prefix="/requirements", tags=["requirements"])
 
@@ -26,3 +27,13 @@ def validate_requirements(request: RequirementValidationRequest) -> dict[str, ob
     service = DesignService()
     result = service.validate_requirements(request.antenna_type, request.to_engineering_requirements())
     return success_response(result)
+
+
+@router.post("")
+def create_requirement(requirement: RequirementSchema) -> dict[str, object]:
+    """Validate and normalize a reusable structured requirement."""
+    payload = requirement.model_dump()
+    payload["frequency_hz"] = requirement.normalized_frequency_hz()
+    payload.pop("frequency", None)
+    payload.pop("frequency_unit", None)
+    return success_response({"requirement": payload})

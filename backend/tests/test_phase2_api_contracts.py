@@ -70,6 +70,32 @@ def test_recommendations_use_the_standard_api_envelope() -> None:
     assert body["data"]["recommendations"]
 
 
+def test_explainable_recommendation_endpoint_returns_candidates_and_reason_codes() -> None:
+    response = client.post(
+        "/api/v1/recommendations",
+        json={
+            "application": "point to point link", "frequency": 915, "frequency_unit": "MHz",
+            "directionality": "directional", "polarization": "linear", "max_dimension_m": 1.0,
+        },
+    )
+
+    assert response.status_code == 200
+    data = response.json()["data"]
+    assert data["engine_version"] == "recommendation-engine-v1"
+    assert data["recommended"][0]["family"] == "yagi_uda"
+    assert data["excluded_candidates"]
+
+
+def test_requirement_endpoint_normalizes_frequency() -> None:
+    response = client.post(
+        "/api/v1/requirements",
+        json={"application": "custom", "frequency": 0.915, "frequency_unit": "GHz"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["data"]["requirement"]["frequency_hz"] == pytest.approx(915e6)
+
+
 def test_missing_required_field_returns_structured_error() -> None:
     response = client.post("/api/v1/designs", json={"frequency": 915, "frequency_unit": "MHz"})
 

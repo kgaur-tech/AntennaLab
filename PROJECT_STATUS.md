@@ -4,13 +4,13 @@
 2026-09-29
 
 ## Current Phase
-Phase 3: engineering workspace foundation and architecture hardening complete.
+Phase 3: canonical design lifecycle and interactive geometry workspace foundation complete.
 
 Phase 1 Engineering Core and Phase 2 Backend/API Foundation are complete for the current MVP foundation. Phase 3 is now implemented as a presentable, tested engineering workspace UI.
 
 ## Current Milestone
-Begin Phase 4 planning: render the existing canonical geometry payload without
-moving calculations into the frontend or overstating model fidelity.
+Prepare Phase 4: add genuine model-supported analysis workflows; do not label
+analytical calculations as full-wave simulation.
 
 ## Architecture Hardening Completed
 - Added a root `pyproject.toml` for reliable Python test discovery and lint configuration.
@@ -23,6 +23,28 @@ moving calculations into the frontend or overstating model fidelity.
 
 ## Overall Progress
 85%
+
+## Phase 3 Design Lifecycle Completed
+- Added in-memory canonical design storage and revision snapshots behind a future database adapter boundary.
+- Added get, patch, validate, regenerate-geometry, and revision endpoints for existing designs.
+- Preserved deterministic model geometry; Yagi individual director updates are tested.
+- The workspace continues to render backend-generated geometry in its lazy-loaded 3D viewer.
+
+## Requirement and Recommendation Engine Completed
+- Added canonical requirement validation and normalization at `POST /api/v1/requirements`.
+- Added a capability registry for dipole, monopole, and Yagi-Uda model support metadata.
+- Added `POST /api/v1/recommendations` with hard-constraint filtering, weighted soft scoring, reason codes, alternatives, excluded candidates, warnings, and `recommendation-engine-v1` versioning.
+- Added a seven-step requirement wizard with directionality and supported polarization options.
+- Connected the recommendations screen to the explainable internal endpoint and design handoff.
+- Marks gain/bandwidth compatibility as unsupported instead of inventing values.
+
+## Product UI Expansion Completed
+- Added a cohesive hash-routed product shell with accessible global navigation, footer, responsive layout, and public page metadata.
+- Added Home, Explore, antenna detail, requirements wizard, recommendations, workspace, simulation, parameter sweep, optimization, design history, datasheets, Learn, fabrication, manufacturing, projects, documentation, and About experiences.
+- Connected recommendations to the internal backend recommendation service; the wizard transfers its structured requirement locally to that flow.
+- Added model-specific details that distinguish the calculated dipole/monopole models from the Yagi-Uda geometry-only model.
+- Added a lazy-loaded React Three Fiber geometry viewer that consumes canonical backend geometry rather than recalculating dimensions in the frontend.
+- Marked unimplemented persistence, sweeps, optimization, simulation, manufacturing, and export workflows as unavailable or planned—no demo engineering values are presented as real results.
 
 ## Completed Engineering Core
 - Centralized physical constants in `engineering/core/constants/physics.py`
@@ -66,8 +88,8 @@ moving calculations into the frontend or overstating model fidelity.
 - Yagi-Uda `yagi-uda-v1`: parameterized reflector, driven element, individual directors, spacing list, boom length, mutable geometry parameters
 
 ## Verified Test Status
-- `python -m pytest`: 30 passed
-- `npm --prefix frontend run test`: 8 passed
+- `python -m pytest`: 36 passed
+- `npm --prefix frontend run test`: 11 passed
 - `npm --prefix frontend run lint`: passed
 - `npm --prefix frontend run build`: passed
 - Live API checks: dipole 915 MHz generation succeeds, 915 MHz and 0.915 GHz produce the same design hash, invalid frequency returns a structured validation error

@@ -3,6 +3,88 @@
 ## 2026-09-29
 
 ### Phase
+Phase 3 — Design Workspace and Interactive Geometry Foundation.
+
+### Implementation
+- Replaced the repository placeholder with an in-memory canonical design and revision adapter.
+- Added design retrieval, parameter update, server-side validation, geometry regeneration, and explicit revision APIs.
+- Kept all generation and validation inside the existing engineering models.
+- Added lifecycle coverage demonstrating that a Yagi director change preserves the other individual director dimensions.
+- Documented the lifecycle and geometry contract.
+
+### Verification
+- `python -m pytest`: 36 passed.
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 11 passed.
+- `npm --prefix frontend run build`: passed.
+
+### Known Limitations
+- Design/revision persistence is process-local until a database adapter is introduced.
+- The 3D viewer has orbit, pan, and zoom. Camera reset, explicit element highlighting, and dimension overlays remain future workspace refinements.
+- No full-wave simulation, calculated Yagi gain, impedance, VSWR, or bandwidth was added.
+
+### Next Step
+Phase 4: add only genuine analysis/plot workflows supported by internal models.
+
+## 2026-09-29
+
+### Phase
+Phase 2 — Requirement Engine and Explainable Antenna Recommendation.
+
+### Implementation
+- Added structured capability metadata and a versioned deterministic recommendation engine.
+- Added hard frequency, directionality, polarization, and size constraints before soft scoring.
+- Added score components, stable reason codes, alternatives, excluded candidates, warnings, and unsupported-criterion states.
+- Added requirement normalization and explainable recommendation API endpoints.
+- Connected the product wizard and recommendation page to the new backend contract.
+
+### Engineering Decisions
+- Capability descriptions are not engineering performance results.
+- Gain and bandwidth are marked unsupported for recommendation scoring until the internal models can evaluate them.
+- A high soft score never overrides a hard-constraint failure.
+
+### Verification
+- `python -m pytest`: 35 passed.
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 11 passed.
+- `npm --prefix frontend run build`: passed.
+
+### Next Step
+Phase 3: persist canonical revisions and add safe parameter editing before implementing genuine sweeps or optimization.
+
+## 2026-09-29
+
+### Phase
+Representative product UI expansion.
+
+### Implementation
+- Added a hash-routed, responsive AntennaLab product shell and connected navigation.
+- Added Home, Explore, antenna detail, multi-step requirements, recommendations, workspace, simulation, sweep, optimization, history, datasheets, Learn, fabrication, manufacturing, projects, documentation, and About pages.
+- Connected the recommendations experience to the internal API and passed wizard requirements through browser session state.
+- Added a lazy-loaded 3D geometry viewer using React Three Fiber; it renders only canonical geometry returned by the engineering engine.
+- Added public-facing metadata, accessible skip navigation, focus styles, labels, empty states, status badges, and explicit implementation-state messaging.
+- Added route and engineering-honesty frontend coverage.
+
+### Real vs Representative Functionality
+- Real: model catalog, requirement validation, design generation, canonical geometry, analytical results where implemented, and internal recommendations.
+- Representative only: saved projects/history, sweeps, optimization, numerical simulation, datasheet export, manufacturing requests, and authentication. These pages state their unavailable status and do not show fabricated engineering results.
+
+### Verification
+- `python -m pytest`: 30 passed.
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 11 passed.
+- `npm --prefix frontend run build`: passed. The 3D renderer is emitted as a lazy-loaded chunk.
+
+### Known Limitations
+- The 3D viewer provides rotate, pan, and zoom; reset, visibility controls, and dimension annotations are future workspace enhancements.
+- The browser verification connector could not initialize in this environment due to missing sandbox metadata; automated tests and production build completed successfully.
+
+### Next Step
+Build persistence-backed revisions and editable canonical parameters before adding actual sweeps or optimization.
+
+## 2026-09-29
+
+### Phase
 Architecture hardening.
 
 ### Implementation

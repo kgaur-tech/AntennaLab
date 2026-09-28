@@ -7,9 +7,15 @@ export interface RequirementInput {
   gain_db?: number;
   polarization: string;
   is_directional: boolean;
+  directionality?: 'no_preference' | 'omnidirectional' | 'directional' | 'highly_directional';
   max_dimension_m?: number;
+  max_width_m?: number;
+  max_height_m?: number;
+  max_volume_m3?: number;
   target_impedance_ohms: number;
   environment: string;
+  feed_type?: string;
+  connector?: string;
   notes?: string;
   priority_weights?: Record<string, number>;
   antenna_family_preferences?: AntennaFamily[];
@@ -20,6 +26,35 @@ export interface RecommendationCandidate {
   score: number;
   reasons: string[];
   alternatives: string[];
+}
+
+export interface RecommendationComponent {
+  criterion: string;
+  status: 'EVALUATED' | 'NOT_EVALUATED' | 'UNSUPPORTED';
+  score: number | null;
+  reason_code: string;
+  message: string;
+}
+
+export interface ExplainableRecommendationCandidate {
+  family: AntennaFamily;
+  model_version: string;
+  status: 'eligible' | 'excluded';
+  score: number | null;
+  hard_constraints: RecommendationComponent[];
+  score_components: RecommendationComponent[];
+  reasons: string[];
+  tradeoffs: string[];
+  warnings: string[];
+}
+
+export interface ExplainableRecommendationResponse {
+  engine_version: string;
+  requirement: Record<string, unknown>;
+  recommended: ExplainableRecommendationCandidate[];
+  alternatives: ExplainableRecommendationCandidate[];
+  excluded_candidates: ExplainableRecommendationCandidate[];
+  warnings: string[];
 }
 
 export interface ApiErrorPayload {
