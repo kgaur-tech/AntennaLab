@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+.env
+.venv*
+
+# Node / frontend
+node_modules/
+dist/
+build/
+.next/
+coverage/
+*.tsbuildinfo
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Generated outputs
+*.log
+*.sqlite3
+/tmp/
+output/
+reports/
+
+# Env files
+.env.local
+.env.*.local

@@ -1,0 +1,13 @@
+{
+  "name": "antenna-lab",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"python -m uvicorn backend.app.main:app --reload\" \"npm --prefix frontend run dev\"",
+    "test": "python -m pytest && npm --prefix frontend run test",
+    "lint": "npm --prefix frontend run lint",
+    "build": "npm --prefix frontend run build"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
