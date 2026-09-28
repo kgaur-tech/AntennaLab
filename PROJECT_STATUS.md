@@ -4,13 +4,13 @@
 2026-09-29
 
 ## Current Phase
-Phase 5: deterministic parameter sweep and optimization backend baseline complete.
+Phase 6: revision-history, comparison, and datasheet backend foundation complete; frontend delivery remains partial.
 
 Phase 1 Engineering Core and Phase 2 Backend/API Foundation are complete for the current MVP foundation. Phase 3 is now implemented as a presentable, tested engineering workspace UI.
 
 ## Current Milestone
-Prepare Phase 6: add persistence-backed candidate promotion and a scientific
-sweep visualization UI over the existing typed backend result contract.
+Complete the Phase 6 frontend timeline/comparison/datasheet presentation before
+beginning Phase 7 learning, fabrication, and measurement workflows.
 
 ## Architecture Hardening Completed
 - Added a root `pyproject.toml` for reliable Python test discovery and lint configuration.
@@ -23,6 +23,12 @@ sweep visualization UI over the existing typed backend result contract.
 
 ## Overall Progress
 85%
+
+## Phase 6 Backend Foundation Completed
+- Added immutable revision retrieval, parameter-snapshot comparison, and engineering datasheet payload APIs.
+- Parameter diffs include indexed Yagi values; unavailable historical metrics remain explicitly unavailable.
+- Datasheet payload includes canonical design, revision, analysis summary, warnings, assumptions, and reproducibility metadata.
+- PDF rendering, frontend timeline/comparison screens, and a broader visual-professionalization pass remain pending.
 
 ## Phase 5 Sweep and Optimization Baseline Completed
 - Added bounded parameter-sweep APIs over isolated canonical design candidates.
@@ -102,7 +108,7 @@ sweep visualization UI over the existing typed backend result contract.
 - Yagi-Uda `yagi-uda-v1`: parameterized reflector, driven element, individual directors, spacing list, boom length, mutable geometry parameters
 
 ## Verified Test Status
-- `python -m pytest`: 41 passed
+- `python -m pytest`: 42 passed
 - `npm --prefix frontend run test`: 11 passed
 - `npm --prefix frontend run lint`: passed
 - `npm --prefix frontend run build`: passed

@@ -3,6 +3,31 @@
 ## 2026-09-29
 
 ### Phase
+Phase 6 — Design History, Comparison, and Datasheet Backend Foundation.
+
+### Implementation
+- Added immutable revision lookup to the repository boundary.
+- Added revision-list, comparison, and datasheet payload APIs.
+- Added deterministic parameter-diff generation, including individual array element paths.
+- Added honest historical metric comparison and reproducibility metadata.
+
+### Verification
+- `python -m pytest`: 42 passed.
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 11 passed.
+- `npm --prefix frontend run build`: passed.
+
+### Limitations
+- Persistence remains in-memory.
+- The datasheet is a structured engineering payload, not yet a rendered PDF.
+- Timeline, side-by-side comparison, datasheet UI, and the requested broad frontend professionalization are not complete in this increment.
+
+### Next Step
+Finish the Phase 6 frontend interfaces and verified PDF renderer before starting Phase 7.
+
+## 2026-09-29
+
+### Phase
 Phase 5 — Parameter Sweep and Optimization Engine Baseline.
 
 ### Implementation

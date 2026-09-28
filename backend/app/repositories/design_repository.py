@@ -29,6 +29,12 @@ class DesignRepository:
     def list_revisions(self, design_id: str) -> list[dict[str, Any]]:
         return deepcopy(self._revisions.get(design_id, []))
 
+    def get_revision(self, design_id: str, revision_number: int) -> dict[str, Any] | None:
+        for revision in self._revisions.get(design_id, []):
+            if revision["revision_number"] == revision_number:
+                return deepcopy(revision)
+        return None
+
     def list_recent(self) -> list[dict[str, Any]]:
         return [deepcopy(design) for design in self._designs.values()]
 

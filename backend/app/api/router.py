@@ -6,6 +6,7 @@ from backend.app.api.routes.requirements import router as requirements_router
 from backend.app.api.routes.recommendations import router as recommendations_router
 from backend.app.api.routes.analysis import router as analysis_router
 from backend.app.api.routes.sweeps import router as sweeps_router
+from backend.app.api.routes.history import router as history_router
 
 api_router = APIRouter()
 api_router.include_router(requirements_router)
@@ -14,3 +15,4 @@ api_router.include_router(models_router)
 api_router.include_router(recommendations_router)
 api_router.include_router(analysis_router)
 api_router.include_router(sweeps_router)
+api_router.include_router(history_router)
