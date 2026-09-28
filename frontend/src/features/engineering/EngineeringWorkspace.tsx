@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 
-import { EngineeringApiError, generateDesign, getModels, validateRequirements } from '../../services/designsApi';
+import { EngineeringApiError, generateDesign, getModels, runDesignAnalysis, validateRequirements } from '../../services/designsApi';
 import type {
   DesignCreateInput,
   DesignGenerationResult,
@@ -56,6 +56,7 @@ export default function EngineeringWorkspace() {
   const [result, setResult] = useState<DesignGenerationResult | null>(null);
   const [message, setMessage] = useState<EngineeringMessage | null>(null);
   const [copiedHash, setCopiedHash] = useState(false);
+  const [analysisState, setAnalysisState] = useState<'idle' | 'running' | 'complete' | 'error'>('idle');
 
   useEffect(() => {
     let active = true;
@@ -137,6 +138,19 @@ export default function EngineeringWorkspace() {
     setCopiedHash(true);
   };
 
+  const handleRunAnalysis = async () => {
+    if (!result) return;
+    setAnalysisState('running');
+    try {
+      const analysis = await runDesignAnalysis(result.design.design_id);
+      setResult((current) => current ? { ...current, analysis } : current);
+      setAnalysisState('complete');
+    } catch (error) {
+      setAnalysisState('error');
+      setMessage(toMessage(error, 'Analysis failed'));
+    }
+  };
+
   const warnings = result?.analysis.warnings ?? result?.design.warnings ?? [];
   const assumptions = result?.analysis.assumptions ?? result?.design.assumptions ?? [];
 
@@ -186,6 +200,15 @@ export default function EngineeringWorkspace() {
 
         <div className="workspace-column">
           <ModelInfoCard model={activeModel} />
+          <section className="panel">
+            <p className="eyebrow">Fast Analytical</p>
+            <h2>Analysis</h2>
+            <p className="muted">Status: {analysisState}</p>
+            <button type="button" className="primary-button" onClick={() => void handleRunAnalysis()} disabled={!result || analysisState === 'running'}>
+              {analysisState === 'running' ? 'Running analysis…' : 'Run analysis'}
+            </button>
+            <p className="muted">Results are calculated internal analytical outputs, not full-wave simulation.</p>
+          </section>
           <AnalysisMetrics analysis={result?.analysis ?? null} />
           <AssumptionsPanel assumptions={assumptions} />
           <WarningsPanel warnings={warnings} />

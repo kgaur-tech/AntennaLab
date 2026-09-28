@@ -3,6 +3,67 @@
 ## 2026-09-29
 
 ### Phase
+Phase 5 — Parameter Sweep and Optimization Engine Baseline.
+
+### Implementation
+- Added bounded deterministic candidate range generation and editable indexed parameter paths.
+- Added isolated candidate validation and internal model analysis per sweep point.
+- Added partial-result handling, reproducible input hashes, and process-local caching.
+- Added deterministic single-objective grid-search ranking over feasible candidates.
+- Added sweep and optimization API routes and regression coverage.
+
+### Engineering Decisions
+- Optimization evaluates only metrics returned by the actual analysis model.
+- A selected candidate is highest scoring only within the finite evaluated range and declared objective.
+- The original design is never mutated by sweep candidate generation.
+
+### Verification
+- `python -m pytest`: 41 passed.
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 11 passed.
+- `npm --prefix frontend run build`: passed.
+
+### Known Limitations
+- There is no sweep chart/candidate-inspection or promotion UI yet.
+- No multi-objective scoring, Pareto front, durable jobs, cancellation, or database persistence exists.
+- Yagi candidate evaluation is constrained to its actual dimensional metrics; no gain or VSWR optimization is implied.
+
+### Next Step
+Phase 6 should add typed frontend visualization and explicit candidate-to-revision promotion over this baseline.
+
+## 2026-09-29
+
+### Phase
+Phase 4 — Analysis and Simulation Engine Foundation.
+
+### Implementation
+- Added `AnalysisService` for synchronous, cache-aware internal Tier 1 analysis.
+- Added design-specific analysis APIs and stable analysis identifiers.
+- Integrated the existing analytical radiation samples into the cached result contract.
+- Added a workspace action for the exact canonical design ID.
+- Added scientific-result documentation and regression coverage.
+
+### Engineering Decisions
+- Dipole is the first complete analysis reference model because its thin-wire E-plane expression and assumptions already existed in the engineering core.
+- Normalized radiation response is never labeled as absolute gain.
+- `CALCULATED` analytical results are not called simulated or measured.
+
+### Verification
+- `python -m pytest`: 39 passed.
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 11 passed.
+- `npm --prefix frontend run build`: passed.
+
+### Known Limitations
+- Cache and analysis persistence are process-local.
+- No numerical/full-wave solver, frequency sweep, model-based Yagi gain, VSWR, efficiency, or measured-data import exists.
+
+### Next Step
+Phase 5 can add parameter sweeps using only repeated, classified internal evaluations.
+
+## 2026-09-29
+
+### Phase
 Phase 3 — Design Workspace and Interactive Geometry Foundation.
 
 ### Implementation

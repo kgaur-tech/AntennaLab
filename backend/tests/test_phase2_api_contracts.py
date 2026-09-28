@@ -96,6 +96,16 @@ def test_requirement_endpoint_normalizes_frequency() -> None:
     assert response.json()["data"]["requirement"]["frequency_hz"] == pytest.approx(915e6)
 
 
+def test_design_analysis_endpoint_returns_calculated_result_and_cache_state() -> None:
+    design = client.post("/api/v1/designs", json={"antenna_type": "dipole", "frequency": 915, "frequency_unit": "MHz"}).json()["data"]["design"]
+    first = client.post(f"/api/v1/designs/{design['design_id']}/analysis", json={"settings": {"sample_count": 19}})
+    second = client.post(f"/api/v1/designs/{design['design_id']}/analysis", json={"settings": {"sample_count": 19}})
+
+    assert first.status_code == 200
+    assert first.json()["data"]["result_class"] == "CALCULATED"
+    assert second.json()["data"]["cache_hit"] is True
+
+
 def test_missing_required_field_returns_structured_error() -> None:
     response = client.post("/api/v1/designs", json={"frequency": 915, "frequency_unit": "MHz"})
 

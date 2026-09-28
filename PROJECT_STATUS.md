@@ -4,13 +4,13 @@
 2026-09-29
 
 ## Current Phase
-Phase 3: canonical design lifecycle and interactive geometry workspace foundation complete.
+Phase 5: deterministic parameter sweep and optimization backend baseline complete.
 
 Phase 1 Engineering Core and Phase 2 Backend/API Foundation are complete for the current MVP foundation. Phase 3 is now implemented as a presentable, tested engineering workspace UI.
 
 ## Current Milestone
-Prepare Phase 4: add genuine model-supported analysis workflows; do not label
-analytical calculations as full-wave simulation.
+Prepare Phase 6: add persistence-backed candidate promotion and a scientific
+sweep visualization UI over the existing typed backend result contract.
 
 ## Architecture Hardening Completed
 - Added a root `pyproject.toml` for reliable Python test discovery and lint configuration.
@@ -23,6 +23,20 @@ analytical calculations as full-wave simulation.
 
 ## Overall Progress
 85%
+
+## Phase 5 Sweep and Optimization Baseline Completed
+- Added bounded parameter-sweep APIs over isolated canonical design candidates.
+- Each point uses existing internal model validation and analysis; invalid points are retained as structured partial results.
+- Added deterministic sweep identity/cache and a single-objective grid-search baseline.
+- Supports only metrics genuinely returned by each selected analysis model.
+- Candidate visualization, inspection, and promotion UI remain the next focused increment.
+
+## Phase 4 Analysis Completed
+- Added a versioned Tier 1 fast analytical analysis service with deterministic SHA-256 input identity and safe in-memory caching.
+- Added analysis run/latest/result APIs for canonical design IDs.
+- Added a workspace “Run analysis” action with explicit calculated—not simulated—status labeling.
+- Added dipole reference tests for normalized angular pattern data, deterministic hashes, cache reuse, and unavailable metrics.
+- No full-wave solver, artificial gain/VSWR, or external engineering service was added.
 
 ## Phase 3 Design Lifecycle Completed
 - Added in-memory canonical design storage and revision snapshots behind a future database adapter boundary.
@@ -88,7 +102,7 @@ analytical calculations as full-wave simulation.
 - Yagi-Uda `yagi-uda-v1`: parameterized reflector, driven element, individual directors, spacing list, boom length, mutable geometry parameters
 
 ## Verified Test Status
-- `python -m pytest`: 36 passed
+- `python -m pytest`: 41 passed
 - `npm --prefix frontend run test`: 11 passed
 - `npm --prefix frontend run lint`: passed
 - `npm --prefix frontend run build`: passed

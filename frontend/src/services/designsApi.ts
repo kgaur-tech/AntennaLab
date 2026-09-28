@@ -102,5 +102,9 @@ export async function getModels(): Promise<ModelListResult> {
   return requestJson<ModelListResult>(apiUrl('/api/v1/models'), undefined, 'Model listing failed.');
 }
 
+export async function runDesignAnalysis(designId: string): Promise<DesignGenerationResult['analysis'] & { analysis_id: string; input_hash: string; duration_ms: number; cache_hit: boolean; analysis_type: string; status: string }> {
+  return requestJson(`/api/v1/designs/${designId}/analysis`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ settings: {} }) }, 'Analysis failed.');
+}
+
 export const listModels = getModels;
 export const validateDesignRequirement = validateRequirements;
