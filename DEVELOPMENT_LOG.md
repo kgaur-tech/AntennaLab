@@ -1,5 +1,239 @@
 # AntennaLab Development Log
 
+## 2026-10-15
+
+### Phase
+Professional UI/UX completion audit, typography unification, and release preparation.
+
+### Audit and Implementation
+- Rechecked the live frontend source, route shell, engineering workspace,
+  responsive canvas containment, genuine-analysis plot path, 3D components,
+  tests, and project documentation before release preparation.
+- Unified the visible interface under the requested Times New Roman type system,
+  including navigation, controls, engineering parameters, status labels, and
+  SVG plot labels. Existing component-specific type rules are deliberately
+  overridden so the requirement applies consistently across every route.
+- Retained the interactive React Three Fiber product visual and canonical
+  workspace geometry renderer. The workspace viewport has explicit width and
+  shrink containment so it cannot cover adjacent engineering panels at
+  intermediate widths.
+- Retained only data-backed scientific output: the radiation plot renders
+  normalized samples returned by the selected engineering model and remains
+  absent when no samples exist. No full-wave, sweep, impedance, VSWR, or Yagi
+  values were fabricated.
+- Updated status and engineering documentation to distinguish completed 3D
+  rendering and conditional analytical plotting from future numerical analysis.
+
+### Release Verification
+- Final lint, frontend tests, frontend production build, Python test suite,
+  whitespace check, and Git state review are run immediately before commit.
+
+### Remaining Limits
+- The browser automation bridge remains unavailable in this environment due to
+  its sandbox metadata failure; static, unit, integration, lint, and production
+  build validation are used for this release check.
+- The lazy Three.js controls chunk still produces Vite's advisory size warning.
+  It is code-split and does not prevent a production build.
+
+## 2026-10-07
+
+### Phase
+Responsive workspace repair and controlled 3D motion pass.
+
+### Issue
+- A visual report showed the geometry canvas extending over the right-hand
+  analysis inspector at an intermediate viewport width. The workspace grid had
+  mixed breakpoint rules and no final explicit minimum-width/canvas-width
+  containment layer.
+
+### Implementation
+- Added `min-width: 0` and explicit width/max-width containment to workspace
+  grid children and the R3F canvas.
+- At widths of 1280px or less, the form and inspector remain compact columns
+  while the geometry/plot work column occupies a separate full-width row. At
+  760px or less, all workspace columns stack into one column.
+- Added slow auto-orbit to the canonical geometry viewer, with pause-on-drag
+  and delayed resume. The visual is disabled when reduced motion is requested.
+- Added subtle GPU-friendly depth transitions for panels, plot surfaces, empty
+  states, and future-workflow previews; motion reductions remove these effects.
+
+### Verification
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 14 passed.
+- `npm --prefix frontend run build`: passed.
+- `python -m pytest`: 42 passed.
+
+## 2026-10-07
+
+### Phase
+Ultimate frontend reconstruction audit — scientific analysis workspace.
+
+### Audit Finding
+- The workspace already receives genuine normalized analytical pattern samples
+  for supported dipole/monopole models in `AnalysisResult.plots`, but it did
+  not render them. The broad product page did not have enough evidence to
+  render a standalone simulation, sweep, impedance, VSWR, or Yagi pattern.
+
+### Implementation
+- Added `RadiationPattern`, a large SVG scientific plot surface to the
+  engineering workspace. It maps only backend-provided angle/normalized-power
+  samples to labelled axes and grid lines, labels the genuine result class and
+  model, and explicitly distinguishes normalized analytical output from gain
+  or full-wave simulation.
+- The component returns no UI where plot data is unavailable, keeping the
+  Yagi-Uda model limitations and empty-state honesty intact.
+- Added focused rendering and no-data tests. No analysis calculation, API
+  contract, design-generation flow, or workspace state behavior was modified.
+
+### Verification
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 14 passed.
+- `npm --prefix frontend run build`: passed.
+- `python -m pytest`: 42 passed.
+
+## 2026-10-07
+
+### Phase
+V2 reconstruction completion audit and Phase 5/6 presentation follow-up.
+
+### Audit
+- Rechecked the real route inventory, current 3D components, responsive CSS,
+  route-level availability states, dependencies, and test coverage against the
+  reconstruction brief.
+- Confirmed that the backend-driven workspace remains the source of canonical
+  geometry. The homepage visual is an explicitly illustrative parametric
+  product scene and does not stand in for a generated design.
+
+### Implementation
+- Added an input-driven technical annotation to the interactive hero scene;
+  this avoids fabricating a frequency value for a non-generated home view.
+- Replaced the visually generic presentation of unavailable optimization,
+  design-history, and datasheet routes with distinct, responsive engineering
+  structures: a search-flow, revision timeline, and document preview frame.
+- Kept all values intentionally structural. Each route continues to state why
+  actual candidates, revisions, or document content are unavailable.
+
+### Verification
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 12 passed.
+- `npm --prefix frontend run build`: passed.
+- `python -m pytest`: 42 passed.
+
+### Limitation
+- Vite's advisory warning for the lazy Three.js controls chunk remains;
+  code-splitting keeps it out of the initial main application bundle.
+
+## 2026-10-07
+
+### Phase
+Application-wide theme-system and visual-consistency audit.
+
+### Audit Findings
+- The existing product has no authentication, financial-aid, dashboard,
+  profile/settings, modal, or database-settings screens; these generic surfaces
+  were not invented or substituted for actual AntennaLab routes.
+- The V2 editorial homepage, grouped navigation, canonical-engineering
+  workspace, and backend-generated geometry viewer were retained. The shared
+  token system was present but light-only, so a complete dark theme was the
+  material cross-application gap.
+
+### Implementation
+- Added a shared header `ThemeToggle` behavior with an accessible action label,
+  light/dark state, local-storage persistence, and token-driven transitions.
+- Added a synchronous theme bootstrap in `frontend/index.html` which honors a
+  saved preference, otherwise uses `prefers-color-scheme`, and sets
+  `color-scheme` before React mounting to avoid a theme flash.
+- Added a composed dark engineering palette and targeted component overrides
+  across navigation, forms, dropdowns, panels, cards, status/error states,
+  empty states, workspace, footer, homepage sections, and the 3D hero surface.
+- Added a frontend test covering theme toggle state, persistence, and the
+  accessible label. No business logic, API call, validation rule, route, or
+  engineering calculation was changed.
+
+### Verification
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 12 passed.
+- `npm --prefix frontend run build`: passed.
+
+### Limitations
+- The local Vite server starts successfully, but the installed in-app browser
+  bridge still fails before connection with a sandbox-metadata error. Rendered
+  screenshot/console validation could not run in this environment.
+- Vite retains the existing advisory warning for the lazy Three.js controls
+  chunk; the production build remains successful.
+
+## 2026-10-07
+
+### Phase
+Frontend UI/UX reconstruction V2 — public product narrative and interactive
+engineering visualization.
+
+### Implementation
+- Replaced the homepage's previous hero/card and repeated-grid composition with
+  a full editorial sequence: interactive 3D hero, problem statement, workflow
+  rail, dark technical analysis section, capability map, model library, and a
+  final design CTA.
+- Added `HeroAntenna`, a lazy-loaded React Three Fiber Yagi-Uda product visual
+  with six distinct cross elements, a boom, cinematic camera/light setup,
+  technical grid and annotations, rotate/zoom/pan controls, slow auto-rotation,
+  delayed auto-rotation resumption after interaction, and reduced-motion mode.
+- Preserved the existing backend-driven canonical geometry viewer in the
+  engineering workspace. The new homepage assembly is illustrative product
+  geometry only; it does not expose unverified values as engineering results.
+- Added structural responsive styles for the reworked hero and narrative
+  sections. Existing grouped navigation, shared design tokens, cards, forms,
+  workspace panels, and honest availability states remain unified under the
+  same visual system.
+- Lazy-loaded the hero scene so the Three.js/OrbitControls payload remains out
+  of the main application entry bundle.
+
+### Verification
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 11 passed.
+- `npm --prefix frontend run build`: passed.
+- `python -m pytest`: 42 passed.
+
+### Limitations
+- Vite continues to issue its existing advisory warning for the code-split
+  Three.js/OrbitControls chunk (about 835 kB minified). It does not block the
+  build and is loaded only with the visual components.
+- Browser screenshot automation remains unavailable because the installed
+  browser bridge fails with missing sandbox metadata. Static, test, type, and
+  production-build verification completed successfully.
+
+## 2026-10-07
+
+### Phase
+Frontend UI/UX transformation and responsive product-shell hardening.
+
+### Implementation
+- Introduced a centralized light engineering design system with refined surface,
+  text, accent, border, radius, and shadow tokens.
+- Replaced the overflow-prone flat navigation with grouped desktop menus and a
+  keyboard-accessible mobile disclosure menu.
+- Re-composed the public homepage with editorial spacing, stronger typography,
+  a subtle technical grid, AntennaLab-specific workflow presentation, and
+  polished surface patterns.
+- Unified workspace, geometry-viewer, form, metric, card, status, and empty
+  state presentation without changing backend-derived engineering content.
+- Added a reusable `Reveal` primitive backed by `IntersectionObserver`, with a
+  no-observer fallback and full reduced-motion support.
+- Added narrow-layout handling for navigation, card grids, workspace panels,
+  forms, and the 3D viewport; no route API or engineering calculation changed.
+
+### Verification
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 11 passed.
+- `npm --prefix frontend run build`: passed; the lazy Three.js geometry chunk
+  remains above Vite's advisory 500 kB threshold.
+- `python -m pytest`: 42 passed.
+
+### Limitations
+- Browser screenshot automation was unavailable due to a sandbox-metadata
+  failure in the installed browser bridge.
+- Existing unavailable sweep, optimization, revision-history, and datasheet
+  workflows remain explicitly unavailable rather than receiving invented data.
+
 ## 2026-09-29
 
 ### Phase

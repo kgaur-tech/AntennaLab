@@ -69,9 +69,9 @@ Status: complete for the current engineering workspace foundation.
 
 Known limits:
 
-- No 2D or 3D geometry rendering yet
+- Interactive 3D rendering of backend canonical geometry: complete for the current workspace
 - No interactive parameter editing yet
-- No plots for returned radiation pattern samples yet
+- Normalized radiation-response plotting: complete when backend sample data is available
 - No saved frontend design history yet
 
 ## Phase 4: 3D Designer

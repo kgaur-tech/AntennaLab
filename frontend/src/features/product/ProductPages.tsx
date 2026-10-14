@@ -1,8 +1,9 @@
-import { useState, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 
 import { EngineeringApiError } from '../../services/designsApi';
 import { getExplainableRecommendations } from '../../services/requirementsApi';
 import type { ExplainableRecommendationResponse, RequirementInput } from '../../types';
+const HeroAntenna = lazy(() => import('./HeroAntenna'));
 
 export type PageName =
   | 'home' | 'explore' | 'detail' | 'design' | 'recommendations' | 'workspace'
@@ -11,10 +12,11 @@ export type PageName =
 
 export interface AppRoute { page: PageName; slug?: string }
 
-const nav = [
-  ['Home', '/'], ['Explore', '/explore'], ['Design', '/design'], ['Recommendations', '/recommendations'],
-  ['Workspace', '/workspace'], ['Simulation', '/simulation'], ['Optimization', '/optimization'],
-  ['Design History', '/designs'], ['Learn', '/learn'], ['Datasheets', '/datasheets'], ['Manufacturing', '/manufacturing'],
+const navGroups = [
+  { label: 'Build', links: [['Requirements', '/design'], ['Recommendations', '/recommendations'], ['Workspace', '/workspace']] },
+  { label: 'Analyze', links: [['Models', '/explore'], ['Analysis', '/simulation'], ['Sweep', '/sweep'], ['Optimize', '/optimization']] },
+  { label: 'Manage', links: [['Design history', '/designs'], ['Datasheets', '/datasheets']] },
+  { label: 'Learn', links: [['Learning center', '/learn'], ['Documentation', '/docs']] },
 ] as const;
 
 const families = {
@@ -61,18 +63,57 @@ const Link = ({ to, children, className = '' }: { to: string; children: ReactNod
 );
 
 export function ProductShell({ route, children }: { route: AppRoute; children: ReactNode }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+  useEffect(() => setMenuOpen(false), [route.page]);
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    window.localStorage.setItem('antennaLab.theme', theme);
+  }, [theme]);
+  const activePaths = route.page === 'home' ? ['/'] : [`/${route.page}`];
   return <div className="product-shell">
     <a className="skip-link" href="#main-content">Skip to main content</a>
     <header className="product-header">
       <Link to="/" className="brand"><span className="brand-mark">A</span><span>AntennaLab</span></Link>
-      <nav aria-label="Primary navigation" className="primary-nav">
-        {nav.map(([label, href]) => <Link key={href} to={href} className={route.page === (href === '/' ? 'home' : href.slice(1).replace('designs', 'designs')) ? 'active' : ''}>{label}</Link>)}
+      <button className="nav-toggle" type="button" aria-expanded={menuOpen} aria-controls="primary-navigation" onClick={() => setMenuOpen((open) => !open)}>
+        <span className="sr-only">Toggle navigation</span><span aria-hidden="true">{menuOpen ? '×' : '☰'}</span>
+      </button>
+      <nav id="primary-navigation" aria-label="Primary navigation" className={`primary-nav ${menuOpen ? 'open' : ''}`}>
+        <Link to="/" className={route.page === 'home' ? 'active nav-home' : 'nav-home'}>Overview</Link>
+        {navGroups.map((group) => <div className="nav-group" key={group.label}>
+          <span>{group.label}</span>
+          <div className="nav-menu">
+            {group.links.map(([label, href]) => <Link key={href} to={href} className={activePaths.includes(href) ? 'active' : ''}>{label}</Link>)}
+          </div>
+        </div>)}
       </nav>
+      <button className="theme-toggle" type="button" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}>
+        <span aria-hidden="true">{theme === 'dark' ? '☀' : '◐'}</span><span className="theme-toggle-label">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+      </button>
       <Link to="/design" className="button primary-button header-cta">Start designing</Link>
     </header>
     <main id="main-content" className={route.page === 'workspace' ? 'workspace-page' : 'product-main'}>{children}</main>
     <footer className="product-footer"><span>© 2026 AntennaLab</span><span>Internal engineering models · Traceable results · No external antenna APIs</span><Link to="/docs">Documentation</Link></footer>
   </div>;
+}
+
+function Reveal({ children, className = '' }: { children: ReactNode; className?: string }) {
+  const element = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const target = element.current;
+    if (!target) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      target.classList.add('is-visible');
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { target.classList.add('is-visible'); observer.disconnect(); }
+    }, { threshold: 0.12 });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
+  return <section ref={element} className={`reveal ${className}`}>{children}</section>;
 }
 
 function PageHeader({ eyebrow, title, description, actions }: { eyebrow: string; title: string; description: string; actions?: ReactNode }) {
@@ -88,17 +129,18 @@ function EmptyState({ title, children, action }: { title: string; children: Reac
 }
 
 function Home() {
-  return <>
-    <section className="home-hero">
-      <div><p className="eyebrow">Engineering software for antenna work</p><h1>From requirements to antenna design.</h1><p>Design, analyze, and understand antennas without manually managing every engineering workflow. Every result is generated by AntennaLab’s internal models and carries its assumptions.</p><div className="header-actions"><Link to="/design" className="button primary-button">Start designing</Link><Link to="/explore" className="button secondary-button">Explore antennas</Link></div></div>
-      <aside className="hero-card"><StatusBadge>Engineering-first workflow</StatusBadge><ol><li>Capture requirements</li><li>Recommend a family</li><li>Generate canonical geometry</li><li>Inspect calculated results</li><li>Prepare to build and measure</li></ol></aside>
+  return <div className="home-rebuild">
+    <section className="hero-rebuild">
+      <div className="hero-intro"><p className="eyebrow hero-load load-one">Engineering software for antenna design</p><h1 className="hero-load load-two">From requirements<br />to a real antenna.</h1><p className="hero-load load-three">Build a defensible path from application constraints to parameterized geometry and carefully classified engineering results.</p><div className="header-actions hero-load load-four"><Link to="/design" className="button primary-button">Start designing <span aria-hidden="true">→</span></Link><Link to="/explore" className="button secondary-button">Explore antennas</Link></div><p className="hero-footnote">Internal, versioned models · Explicit assumptions · No external antenna APIs</p></div>
+      <div className="hero-visual"><Suspense fallback={<div className="hero-antenna-fallback">Loading 3D antenna visual</div>}><HeroAntenna /></Suspense></div>
     </section>
-    <section><div className="section-heading"><p className="eyebrow">Workflow</p><h2>One connected engineering path</h2></div><div className="workflow"><span>Requirements</span><i>→</i><span>Recommendation</span><i>→</i><span>Design</span><i>→</i><span>Analyze</span><i>→</i><span>Optimize</span><i>→</i><span>Build</span></div></section>
-    <section><div className="section-heading"><p className="eyebrow">Platform</p><h2>Designed to grow with the work</h2></div><div className="feature-grid">{[
-      ['Requirement-driven design', 'Translate practical goals into structured engineering input.', 'available'], ['Canonical calculations', 'Generate reproducible dimensions with explicit model versions.', 'available'], ['3D geometry', 'Inspect the returned engineering geometry in the design workspace.', 'available'], ['Analysis', 'Review only metrics supported by the selected internal model.', 'available'], ['Parameter sweeps', 'Compare a model parameter against calculated metrics.', 'planned'], ['Optimization', 'Define objectives and constraints for future solver workflows.', 'planned'], ['Datasheets', 'Prepare traceable design summaries from canonical outputs.', 'planned'], ['Learning', 'Connect engineering decisions to responsible RF fundamentals.', 'available'],
-    ].map(([title, text, state]) => <article className="feature-card" key={title}><StatusBadge kind={state as 'available' | 'planned'}>{state === 'available' ? 'Available' : 'Planned'}</StatusBadge><h3>{title}</h3><p>{text}</p></article>)}</div></section>
-    <section><div className="section-heading"><p className="eyebrow">Supported families</p><h2>Start with a defensible model</h2></div><div className="family-grid">{Object.entries(families).map(([slug, family]) => <article className="family-card" key={slug}><StatusBadge kind={slug === 'yagi-uda' ? 'limited' : 'available'}>{slug === 'yagi-uda' ? 'Geometry model' : 'Analytical model'}</StatusBadge><h3>{family.title}</h3><p>{family.applications}</p><Link to={`/explore/${slug}`} className="text-link">View model details →</Link></article>)}</div></section>
-  </>;
+    <Reveal className="problem-statement"><p className="eyebrow">Why AntennaLab</p><h2>Engineering an antenna should not mean stitching together calculations, geometry, and decisions across disconnected tools.</h2><p>One deliberate workflow keeps requirements, model limits, canonical dimensions, and available analysis connected from the first question.</p></Reveal>
+    <Reveal className="workflow-rebuild"><div className="section-heading"><p className="eyebrow">A connected process</p><h2>Move forward with a clear next engineering action.</h2></div><ol>{[['01', 'Requirements', 'Capture the operating context.'], ['02', 'Recommend', 'Compare applicable model families.'], ['03', 'Design', 'Generate canonical geometry.'], ['04', 'Analyze', 'Inspect classified results.'], ['05', 'Refine', 'Trace the next revision.']].map(([number, title, copy]) => <li key={number}><span>{number}</span><div><h3>{title}</h3><p>{copy}</p></div></li>)}</ol></Reveal>
+    <Reveal className="dark-analysis"><div><p className="eyebrow">Engineering clarity</p><h2>Understand the design before you build it.</h2><p>AntennaLab preserves a useful distinction: calculated metrics are not simulations, simulations are not measurements, and unavailable data is never filled with a guess.</p><Link to="/simulation" className="text-link">Explore analysis <span aria-hidden="true">→</span></Link></div><div className="analysis-visual"><div className="polar-plot"><i /><i /><i /><b /></div><dl><div><dt>Result classification</dt><dd>CALCULATED</dd></div><div><dt>Geometry source</dt><dd>CANONICAL MODEL</dd></div><div><dt>Model scope</dt><dd>EXPLICIT</dd></div></dl></div></Reveal>
+    <Reveal className="capability-story"><div className="story-copy"><p className="eyebrow">A product that grows with the work</p><h2>Geometry, analysis, optimization, history, and documents—each with an honest state.</h2><p>Current capabilities remain precise about what is supported. Future workflows stay visible without posing sample data as actual engineering output.</p><Link to="/workspace" className="text-link">Open the workspace <span aria-hidden="true">→</span></Link></div><div className="capability-map"><span>Geometry</span><span>Analysis</span><span>Optimization</span><span>History</span><span>Datasheet</span></div></Reveal>
+    <Reveal><div className="section-heading"><p className="eyebrow">Model library</p><h2>Start with a defensible model.</h2></div><div className="family-grid">{Object.entries(families).map(([slug, family]) => <article className="family-card" key={slug}><StatusBadge kind={slug === 'yagi-uda' ? 'limited' : 'available'}>{slug === 'yagi-uda' ? 'Geometry model' : 'Analytical model'}</StatusBadge><h3>{family.title}</h3><p>{family.applications}</p><Link to={`/explore/${slug}`} className="text-link">View model details <span aria-hidden="true">→</span></Link></article>)}</div></Reveal>
+    <Reveal className="closing-cta"><p className="eyebrow">Ready when you are</p><h2>Start designing your antenna.</h2><p>Begin with a structured requirement and follow the engineering record as it takes shape.</p><Link to="/design" className="button primary-button">Start designing <span aria-hidden="true">→</span></Link></Reveal>
+  </div>;
 }
 
 function Explore() { return <><PageHeader eyebrow="Model library" title="Explore antennas" description="Understand the capabilities, assumptions, and applicability of the engineering models currently available in AntennaLab." /> <div className="family-grid">{Object.entries(families).map(([slug, family]) => <article className="family-card detailed" key={slug}><StatusBadge kind={slug === 'yagi-uda' ? 'limited' : 'available'}>{slug === 'yagi-uda' ? 'Limited analysis' : 'Calculated pattern'}</StatusBadge><h2>{family.title}</h2><dl><dt>Applications</dt><dd>{family.applications}</dd><dt>Directionality</dt><dd>{family.directionality}</dd><dt>Polarization</dt><dd>{family.polarization}</dd><dt>Model status</dt><dd>{family.status}</dd></dl><Link to={`/explore/${slug}`} className="button secondary-button">Explore {family.title}</Link></article>)}</div></>; }
@@ -147,7 +189,15 @@ const pageContent: Partial<Record<PageName, { eyebrow: string; title: string; de
   about: { eyebrow: 'About AntennaLab', title: 'Engineering, software, education, and fabrication', description: 'AntennaLab is built to make RF design workflows more understandable and reproducible without hiding model limitations.', state: 'The platform combines requirement intake, internal engineering, visual geometry, analysis, learning, and future manufacturing workflows. It does not use external antenna-calculation APIs.' },
 };
 
-function InformationalPage({ page }: { page: PageName }) { const content = pageContent[page] ?? pageContent.docs!; return <><PageHeader eyebrow={content.eyebrow} title={content.title} description={content.description} />{page === 'fabrication' && <div className="workflow fabrication-flow"><span>Design</span><i>→</i><span>Dimensions</span><i>→</i><span>Materials</span><i>→</i><span>Build</span><i>→</i><span>Measure</span><i>→</i><span>Compare</span></div>}<EmptyState title={page === 'optimization' ? 'Optimization: limited preview' : 'Current implementation state'}>{content.state}</EmptyState>{content.action && <div className="center-action"><Link to={content.action[1]} className="button primary-button">{content.action[0]}</Link></div>}</>; }
+function FutureOptimization() { return <section className="future-visual optimization-visual" aria-label="Optimization process preview"><div className="future-flow"><span>Design space</span><i>↓</i><span>Candidate evaluation</span><i>↓</i><span>Constraint filter</span><i>↓</i><span>Feasible designs</span><i>↓</i><span>Best candidates</span></div><p>Candidate values appear only after a model-supported optimization is run.</p></section>; }
+function FutureHistory() { return <section className="future-visual history-visual" aria-label="Design revision timeline preview"><div className="history-line"><span>V1</span><i /><span>V2</span><i /><span>V3</span><i /><span>Next revision</span></div><p>Revision details will remain tied to a saved canonical design and its analysis state.</p></section>; }
+function FutureDatasheet() { return <section className="future-visual datasheet-visual" aria-label="Datasheet document structure preview"><div className="document-sheet"><span>ANTENNALAB ENGINEERING DATASHEET</span><b>Canonical design</b><i /><i /><i /><i /></div><p>A document preview is available only when a canonical design and revision are selected.</p></section>; }
+
+function InformationalPage({ page }: { page: PageName }) {
+  const content = pageContent[page] ?? pageContent.docs!;
+  const visual = page === 'optimization' ? <FutureOptimization /> : page === 'designs' ? <FutureHistory /> : page === 'datasheets' ? <FutureDatasheet /> : null;
+  return <><PageHeader eyebrow={content.eyebrow} title={content.title} description={content.description} />{visual}{page === 'fabrication' && <div className="workflow fabrication-flow"><span>Design</span><i>→</i><span>Dimensions</span><i>→</i><span>Materials</span><i>→</i><span>Build</span><i>→</i><span>Measure</span><i>→</i><span>Compare</span></div>}<EmptyState title={page === 'optimization' ? 'Optimization: limited preview' : 'Current implementation state'}>{content.state}</EmptyState>{content.action && <div className="center-action"><Link to={content.action[1]} className="button primary-button">{content.action[0]}</Link></div>}</>;
+}
 
 function Learn() { const topics = ['Fundamentals', 'Design guides', 'Fabrication', 'Measurement']; return <><PageHeader eyebrow="Learning center" title="Learn antenna engineering responsibly" description="Practical explanations supporting the same concepts used by the product—without presenting idealized models as fabricated measurements." /><div className="feature-grid">{topics.map((topic) => <article className="feature-card" key={topic}><StatusBadge kind="example">Reference topic</StatusBadge><h2>{topic}</h2><p>{topic === 'Fundamentals' ? 'Wavelength, frequency, polarization, gain, directivity, impedance, VSWR, bandwidth, and radiation patterns.' : topic === 'Measurement' ? 'VNA basics, measurement setup, and comparison of measured versus calculated behavior.' : 'Guidance is being expanded with clear scope, assumptions, and source-aware educational material.'}</p><Link to={`/learn/${topic.toLowerCase().replace(' ', '-')}`} className="text-link">Read topic →</Link></article>)}</div></>; }
 

@@ -15,6 +15,7 @@ import DesignSummary from './DesignSummary';
 import GeometrySummary from './GeometrySummary';
 import ModelInfoCard from './ModelInfoCard';
 import RawEngineeringData from './RawEngineeringData';
+import RadiationPattern from './RadiationPattern';
 import RequirementForm from './RequirementForm';
 import ValidationStatus from './ValidationStatus';
 import WarningsPanel from './WarningsPanel';
@@ -194,6 +195,7 @@ export default function EngineeringWorkspace() {
               <GeometryViewer geometry={result?.design.geometry ?? null} />
             </Suspense>
           </section>
+          <RadiationPattern analysis={result?.analysis ?? null} />
           <GeometrySummary geometry={result?.design.geometry ?? null} />
           <RawEngineeringData data={result} />
         </div>

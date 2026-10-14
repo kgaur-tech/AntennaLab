@@ -158,11 +158,11 @@ The frontend renders only values returned by the backend:
 - validation and normalized requirement data
 - canonical design identifiers, dimensions, parameters, materials, feed, assumptions, warnings, and design hash
 - analysis result class, validity, metrics, geometry reference, and raw engineering JSON
-- geometry-ready element data for future visualization
+- canonical geometry data rendered in the interactive Three.js workspace viewer
 
 Unsupported metrics such as VSWR, S11, measured gain, and efficiency are shown as unavailable in the current engineering model. The UI must not fabricate those values or imply full-wave simulation exists.
 
-The current workspace presentation uses Times New Roman and a dark engineering-console visual style. This is only presentation; the frontend remains a renderer of backend canonical engineering data.
+The current workspace uses Times New Roman consistently across content, controls, engineering parameters, and scientific plot labels. It includes a contained, interactive Three.js renderer for backend canonical geometry and a normalized radiation-response plot only when the backend returns genuine sample data. This remains presentation: the frontend does not calculate engineering values or manufacture unavailable results.
 
 Current frontend tests cover:
 

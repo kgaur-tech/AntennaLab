@@ -1,10 +1,10 @@
 # AntennaLab Project Status
 
 ## Last Updated
-2026-09-29
+2026-10-15
 
 ## Current Phase
-Phase 6: revision-history, comparison, and datasheet backend foundation complete; frontend delivery remains partial.
+Phase 6: revision-history, comparison, and datasheet backend foundation complete; frontend delivery remains partial. The present engineering workspace and product experience have been rebuilt and visually verified through automated checks.
 
 Phase 1 Engineering Core and Phase 2 Backend/API Foundation are complete for the current MVP foundation. Phase 3 is now implemented as a presentable, tested engineering workspace UI.
 
@@ -131,3 +131,160 @@ beginning Phase 7 learning, fabrication, and measurement workflows.
 
 ## Next Task
 Proceed to Phase 4 only when requested: build the first geometry visualization layer using the existing canonical geometry payload, while keeping all engineering calculations in the backend/engineering core.
+
+## UI/UX Redesign Update (2026-10-07)
+
+The frontend presentation layer has received a visual-system overhaul without
+changing engineering models, API contracts, or route semantics.
+
+- Replaced the crowded flat route bar with a compact grouped navigation model
+  (`Build`, `Analyze`, `Manage`, and `Learn`), hover/focus menus on desktop,
+  and an accessible collapsed mobile menu. Navigation no longer uses horizontal
+  scrolling.
+- Established centralized interface tokens for light surfaces, typography,
+  spacing, borders, radii, shadows, feedback colors, and the restrained
+  engineering-green accent.
+- Reworked the homepage into a spacious editorial composition with a technical
+  grid motif, workflow card, stronger hierarchy, and original AntennaLab RF
+  visual language. It is no longer a large generic dashboard card.
+- Restyled product pages, cards, forms, empty states, workspace panels, metric
+  cells, and the geometry viewer as related engineering-software surfaces.
+- Added constrained hover/press transitions and an IntersectionObserver-backed
+  reveal primitive. It respects `prefers-reduced-motion` and falls back to
+  visible content where the observer is unavailable.
+- Audited responsive styles at compact breakpoints: grouped menus collapse,
+  grids become single-column where needed, workspace panels stop being sticky,
+  and geometry viewport height scales down to avoid horizontal overflow.
+
+### UI Verification
+
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 11 passed.
+- `npm --prefix frontend run build`: passed.
+- `python -m pytest`: 42 passed.
+
+### UI Limitations
+
+- The existing browser-automation bridge could not start in this environment
+  because it reports missing sandbox metadata; automated visual screenshots
+  could not be captured.
+- Sweep, optimization, history, and datasheet pages intentionally retain their
+  truthful current-availability/empty states until their connected frontend
+  data workflows are completed. The redesign does not fabricate engineering
+  candidates, revisions, plots, or documents.
+
+## UI/UX Reconstruction V2 (2026-10-07)
+
+The public product experience was structurally rebuilt in response to a visual
+quality review. This is a frontend-only change: backend contracts, engineering
+models, calculations, and route semantics are unchanged.
+
+- Replaced the old compact home-card composition with an editorial product
+  narrative: an engineering statement, connected workflow rail, dark analysis
+  section, capability map, model library, and closing CTA.
+- Added a lazy-loaded, real React Three Fiber hero visual of a parametric
+  Yagi-Uda assembly. It has a boom, reflector/driven/director-style elements,
+  soft lighting, a technical grid, drag/zoom/pan interaction, slow autonomous
+  rotation, interaction pause/resume, and reduced-motion support.
+- The workspace continues to render backend-provided canonical geometry. The
+  homepage scene is explicitly a product visual and does not display fabricated
+  dimensions, metrics, or analysis results.
+- Strengthened mobile composition for the 3D scene, editorial hero, workflow,
+  dark section, and capability map while retaining the existing responsive
+  navigation and engineering-workspace layout.
+- Updated the homepage test to assert the new accessible headline and source
+  statement. No dependency was added; existing React Three Fiber/Three/Drei
+  packages are reused. The 3D implementation is code-split from the main app.
+
+## Application-wide Theme Upgrade (2026-10-07)
+
+An application-wide light/dark theme system now complements the existing
+engineering product design without changing workflows or API behavior.
+
+- Added a visible, keyboard-accessible theme control to the shared product
+  header. It updates the document theme, persists with `localStorage`, and
+  announces its next action through its accessible name.
+- Added a pre-React theme bootstrap in `frontend/index.html`: an explicit user
+  choice takes precedence; otherwise the system color preference is used. This
+  prevents an incorrect light-mode flash during initial loading.
+- Composed dark theme tokens and component overrides for navigation, menus,
+  cards, forms, panels, workspace, statuses, empty states, footer, homepage
+  narrative sections, and the 3D visual container. It is a dedicated dark
+  palette, not a simple color inversion.
+- Added frontend coverage for selecting dark mode, persistence, and the
+  updated accessible control. No additional dependency was required.
+
+### Theme Verification
+
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 12 passed.
+- `npm --prefix frontend run build`: passed.
+
+## V2 Completion Audit Follow-up (2026-10-07)
+
+A final route-level audit checked the implemented V2 experience against the
+reconstruction brief rather than treating the homepage alone as completion.
+
+- Confirmed the homepage contains a real lazy-loaded React Three Fiber antenna
+  scene with controlled motion, interaction, reduced-motion behavior, and
+  technical annotations. Added a concise input-driven frequency annotation
+  without presenting an arbitrary frequency as an engineering result.
+- Added distinctive, responsive visual structures to the currently unavailable
+  optimization, design-history, and datasheet routes: search-flow, revision
+  timeline, and document-structure views respectively.
+- These structures state their dependency on a future actual run, saved design,
+  or selected revision. They do not introduce candidate metrics, stored
+  revisions, or datasheet values that the product does not possess.
+
+### Follow-up Verification
+
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 12 passed.
+- `npm --prefix frontend run build`: passed.
+- `python -m pytest`: 42 passed.
+
+## Scientific Analysis Plot Upgrade (2026-10-07)
+
+The engineering workspace now gives actual backend analysis plot data a
+dedicated scientific plotting surface rather than treating it as a generic
+dashboard metric.
+
+- Added `RadiationPattern`, an SVG engineering plot which renders only the
+  normalized angle/response samples returned in `AnalysisResult.plots`.
+- The plot includes labelled axes, a restrained scientific grid, result class
+  and model-version context, a highlighted actual sample, and an explicit
+  normalized-analytical/not-full-wave disclaimer.
+- No graph is rendered when the selected analysis contains no plot data. This
+  preserves Yagi-Uda scope and avoids inventing radiation, frequency-response,
+  or sweep curves.
+- Added two frontend tests for plot rendering and no-data behavior.
+
+### Plot Verification
+
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 14 passed.
+- `npm --prefix frontend run build`: passed.
+- `python -m pytest`: 42 passed.
+
+## Workspace Viewport Responsive Fix and Motion Pass (2026-10-07)
+
+- Fixed the reported mid-width workspace layout failure where the 3D geometry
+  viewport could extend underneath the analysis inspector.
+- Grid children and canvas containers now have explicit shrink/width bounds.
+  At 1280px and below, the workspace uses two compact side columns with the
+  geometry/plot work column spanning a dedicated full row; at 760px and below
+  it becomes one column. This prevents canvas, plot, and inspector overlap.
+- The canonical geometry viewer now uses slow automatic orbit motion that pauses
+  during user interaction and resumes after a short delay. It is disabled under
+  `prefers-reduced-motion`.
+- Added restrained shared depth/elevation motion for application surfaces and a
+  viewport highlight treatment, also disabled for reduced-motion users. No
+  extra 3D library, calculation, or fabricated engineering visualization was
+  introduced.
+
+### Responsive-Fix Verification
+
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run test`: 14 passed.
+- `npm --prefix frontend run build`: passed.
+- `python -m pytest`: 42 passed.
