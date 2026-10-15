@@ -1,7 +1,7 @@
 # AntennaLab Project Status
 
 ## Last Updated
-2026-10-15
+2026-10-16
 
 ## Current Phase
 Phase 6: revision-history, comparison, and datasheet backend foundation complete; frontend delivery remains partial. The present engineering workspace and product experience have been rebuilt and visually verified through automated checks.
@@ -131,6 +131,15 @@ beginning Phase 7 learning, fabrication, and measurement workflows.
 
 ## Next Task
 Proceed to Phase 4 only when requested: build the first geometry visualization layer using the existing canonical geometry payload, while keeping all engineering calculations in the backend/engineering core.
+
+## Responsive Workspace Reflow Fix (2026-10-16)
+
+- Fixed the reported narrow/zoomed workspace clipping: a two-column form-and-
+  inspector arrangement now switches to a single-column sequence at 980px and
+  below, rather than waiting for the smaller mobile breakpoint.
+- This preserves full-width form controls, prevents adjacent engineering panels
+  from being cut off, and leaves the wider two-column inspection layout intact.
+- `npm --prefix frontend run lint` and `npm --prefix frontend run build` pass.
 
 ## UI/UX Redesign Update (2026-10-07)
 

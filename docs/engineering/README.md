@@ -162,7 +162,7 @@ The frontend renders only values returned by the backend:
 
 Unsupported metrics such as VSWR, S11, measured gain, and efficiency are shown as unavailable in the current engineering model. The UI must not fabricate those values or imply full-wave simulation exists.
 
-The current workspace uses Times New Roman consistently across content, controls, engineering parameters, and scientific plot labels. It includes a contained, interactive Three.js renderer for backend canonical geometry and a normalized radiation-response plot only when the backend returns genuine sample data. This remains presentation: the frontend does not calculate engineering values or manufacture unavailable results.
+The current workspace uses Times New Roman consistently across content, controls, engineering parameters, and scientific plot labels. It includes a contained, interactive Three.js renderer for backend canonical geometry and a normalized radiation-response plot only when the backend returns genuine sample data. At 980px and below, workspace columns stack so the requirement form and engineering inspectors remain fully visible at narrow or browser-zoomed widths. This remains presentation: the frontend does not calculate engineering values or manufacture unavailable results.
 
 Current frontend tests cover:
 

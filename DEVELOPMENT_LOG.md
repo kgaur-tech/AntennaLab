@@ -1,5 +1,26 @@
 # AntennaLab Development Log
 
+## 2026-10-16
+
+### Phase
+Responsive engineering-workspace repair.
+
+### Issue
+- At a narrow effective viewport (including browser zoom), the workspace still
+  held two columns. The requirement form could consume the visible width while
+  adjacent engineering panels were clipped, as reported in the workspace UI.
+
+### Implementation
+- Added a 980px workspace reflow breakpoint. The requirement form, work column,
+  and analysis column now stack in a clear single-column sequence before the
+  narrower mobile breakpoint.
+- Retained the wider two-column inspection view and all existing canvas bounds;
+  no engineering data, interaction, or calculation behavior changed.
+
+### Verification
+- `npm --prefix frontend run lint`: passed.
+- `npm --prefix frontend run build`: passed.
+
 ## 2026-10-15
 
 ### Phase
